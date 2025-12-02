@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Users,
@@ -16,8 +16,8 @@ import {
   LayoutDashboard,
   FileText,
   DollarSign,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const differentiators = [
   {
@@ -50,14 +50,24 @@ const differentiators = [
       "We use AI responsibly to speed research, testing, and support—so we can focus on what matters: solving your problems.",
     icon: Sparkles,
   },
-]
+];
 
 const stats = [
-  { value: "6-10", suffix: " weeks", label: "Average Time to MVP", icon: Clock },
+  {
+    value: "6-10",
+    suffix: " weeks",
+    label: "Average Time to MVP",
+    icon: Clock,
+  },
   { value: "<1%", suffix: " P1", label: "Post-Launch Defect Rate", icon: Bug },
-  { value: "Daily", suffix: "/Weekly", label: "Deploy Frequency", icon: Rocket },
+  {
+    value: "Daily",
+    suffix: "/Weekly",
+    label: "Deploy Frequency",
+    icon: Rocket,
+  },
   { value: "4.8", suffix: "/5.0", label: "Client Satisfaction", icon: Star },
-]
+];
 
 const transparency = [
   {
@@ -72,7 +82,8 @@ const transparency = [
   },
   {
     title: "Clear SLAs",
-    description: "Committed response times, uptime guarantees, and escalation paths.",
+    description:
+      "Committed response times, uptime guarantees, and escalation paths.",
     icon: FileText,
   },
   {
@@ -80,7 +91,7 @@ const transparency = [
     description: "Fixed-scope projects or time-and-materials. No hidden fees.",
     icon: DollarSign,
   },
-]
+];
 
 export function WhyUsPageContent() {
   return (
@@ -95,10 +106,13 @@ export function WhyUsPageContent() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">Why Blunova</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              Why Blunova
+            </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Africa-born, world-class engineering partner. We combine senior talent, transparent delivery, and
-              observable practices to help you ship faster.
+              Africa-born, world-class engineering partner. We combine senior
+              talent, transparent delivery, and observable practices to help you
+              ship faster.
             </p>
             <Button variant="hero" size="lg">
               Book a Discovery Call
@@ -117,8 +131,12 @@ export function WhyUsPageContent() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">What Sets Us Apart</h2>
-            <p className="text-muted-foreground">More than a dev shop. A true engineering partner.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              What Sets Us Apart
+            </h2>
+            <p className="text-muted-foreground">
+              More than a dev shop. A true engineering partner.
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -134,8 +152,12 @@ export function WhyUsPageContent() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                   <item.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-foreground font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm">{item.description}</p>
+                <h3 className="text-foreground font-semibold text-lg mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  {item.description}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -151,8 +173,12 @@ export function WhyUsPageContent() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Proven Track Record</h2>
-            <p className="text-muted-foreground">Metrics that matter. Results you can measure.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Proven Track Record
+            </h2>
+            <p className="text-muted-foreground">
+              Metrics that matter. Results you can measure.
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -169,7 +195,7 @@ export function WhyUsPageContent() {
                   <stat.icon className="w-6 h-6 text-secondary" />
                 </div>
                 <div className="text-3xl font-bold mb-1">
-                  <span className="gradient-text">{stat.value}</span>
+                  <span className="text-primary">{stat.value}</span>
                   <span className="text-primary">{stat.suffix}</span>
                 </div>
                 <p className="text-muted-foreground text-sm">{stat.label}</p>
@@ -188,8 +214,12 @@ export function WhyUsPageContent() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Transparent Delivery</h2>
-            <p className="text-muted-foreground">You always know where we stand. No black boxes, no guesswork.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Transparent Delivery
+            </h2>
+            <p className="text-muted-foreground">
+              You always know where we stand. No black boxes, no guesswork.
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -205,13 +235,17 @@ export function WhyUsPageContent() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <item.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-foreground font-semibold mb-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm">{item.description}</p>
+                <h3 className="text-foreground font-semibold mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  {item.description}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
     </>
-  )
+  );
 }
