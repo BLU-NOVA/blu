@@ -1,5 +1,6 @@
 import { Github, Linkedin, Twitter } from "lucide-react"
 import Link from "next/link"
+import Logo from "./Logo"
 
 const footerLinks = {
   company: [
@@ -36,9 +37,7 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">B</span>
-              </div>
+             <Logo/>
               <span className="text-foreground font-semibold text-lg">Blunova</span>
             </Link>
             <p className="text-muted-foreground max-w-sm mb-6">
