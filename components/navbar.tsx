@@ -14,6 +14,8 @@ const navLinks = [
   { name: "Why Us", href: "/why" },
   { name: "Solutions", href: "/solutions" },
   { name: "Portfolio", href: "/portfolio" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/book" },
 ];
 
 export function Navbar() {
@@ -52,9 +54,11 @@ export function Navbar() {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Button variant="hero" size="default">
-              Book a Discovery Call
-            </Button>
+            <Link href="/book">
+              <Button variant="hero" size="default">
+                Book a Discovery Call
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -92,9 +96,11 @@ export function Navbar() {
                   {link.name}
                 </Link>
               ))}
-              <Button variant="hero" className="mt-2">
-                Book a Discovery Call
-              </Button>
+              <Link href="/book">
+                <Button variant="hero" className="mt-2">
+                  Book a Discovery Call
+                </Button>
+              </Link>
             </div>
           </motion.div>
         )}
