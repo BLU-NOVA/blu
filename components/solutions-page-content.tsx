@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Server,
@@ -13,18 +13,21 @@ import {
   Palette,
   ClipboardList,
   CheckCircle2,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const solutions = [
   {
     id: "backend",
     title: "Backend Development",
-    description: "Reliable APIs and scalable server architecture that power your product.",
+    description:
+      "Reliable APIs and scalable server architecture that power your product.",
     icon: Server,
     whatWeDo: [
-      "Microservices & monoliths (Node/NestJS, Go, Python)",
+      "Microservices & monoliths (Node/NestJS, Go, Python, Java)",
       "GraphQL & REST APIs with OpenAPI specs",
       "Event-driven architecture with Kafka",
       "OAuth/OIDC authentication & authorization",
@@ -37,7 +40,8 @@ const solutions = [
       "Clean API contracts",
       "Comprehensive test coverage",
     ],
-    deliverables: "Architecture docs, API specs (OpenAPI), CI/CD pipelines, observability dashboards, runbooks",
+    deliverables:
+      "Architecture docs, API specs (OpenAPI), CI/CD pipelines, observability dashboards, runbooks",
   },
   {
     id: "frontend",
@@ -58,7 +62,8 @@ const solutions = [
       "Accessible to all users",
       "Analytics-ready instrumentation",
     ],
-    deliverables: "Design system, component library, performance budgets, accessibility audit reports",
+    deliverables:
+      "Design system, component library, performance budgets, accessibility audit reports",
   },
   {
     id: "mobile",
@@ -79,7 +84,8 @@ const solutions = [
       "Smooth 60fps performance",
       "High app store ratings",
     ],
-    deliverables: "App binaries, OTA update configs, store listing assets, crash monitoring setup",
+    deliverables:
+      "App binaries, OTA update configs, store listing assets, crash monitoring setup",
   },
   {
     id: "ai-ml",
@@ -100,7 +106,8 @@ const solutions = [
       "Responsible AI practices",
       "Continuous model improvement",
     ],
-    deliverables: "Model documentation, inference APIs, monitoring dashboards, A/B testing frameworks",
+    deliverables:
+      "Model documentation, inference APIs, monitoring dashboards, A/B testing frameworks",
   },
   {
     id: "cloud",
@@ -115,8 +122,14 @@ const solutions = [
       "Observability & monitoring",
       "SRE practices & incident response",
     ],
-    outcomes: ["99.9%+ uptime SLAs", "Optimized cloud costs", "Fast incident resolution", "Automated deployments"],
-    deliverables: "IaC modules, runbooks, cost reports, incident playbooks, architecture diagrams",
+    outcomes: [
+      "99.9%+ uptime SLAs",
+      "Optimized cloud costs",
+      "Fast incident resolution",
+      "Automated deployments",
+    ],
+    deliverables:
+      "IaC modules, runbooks, cost reports, incident playbooks, architecture diagrams",
   },
   {
     id: "data",
@@ -131,8 +144,14 @@ const solutions = [
       "Data quality monitoring",
       "Real-time streaming analytics",
     ],
-    outcomes: ["Single source of truth", "Self-serve analytics", "Data-driven decisions", "Regulatory compliance"],
-    deliverables: "Data models, pipeline code, dashboard templates, data dictionary",
+    outcomes: [
+      "Single source of truth",
+      "Self-serve analytics",
+      "Data-driven decisions",
+      "Regulatory compliance",
+    ],
+    deliverables:
+      "Data models, pipeline code, dashboard templates, data dictionary",
   },
   {
     id: "design",
@@ -153,7 +172,8 @@ const solutions = [
       "Consistent brand experience",
       "Faster design-to-dev handoff",
     ],
-    deliverables: "Figma files, design system, prototype links, research reports",
+    deliverables:
+      "Figma files, design system, prototype links, research reports",
   },
   {
     id: "product",
@@ -168,14 +188,38 @@ const solutions = [
       "Analytics instrumentation",
       "Stakeholder communication",
     ],
-    outcomes: ["Clear product vision", "Measurable outcomes", "Aligned stakeholders", "Data-informed decisions"],
+    outcomes: [
+      "Clear product vision",
+      "Measurable outcomes",
+      "Aligned stakeholders",
+      "Data-informed decisions",
+    ],
     deliverables: "PRDs, roadmaps, analytics dashboards, sprint reports",
   },
-]
+];
 
 export function SolutionsPageContent() {
-  const [activeTab, setActiveTab] = useState("backend")
-  const activeSolution = solutions.find((s) => s.id === activeTab)!
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+
+  const [activeTab, setActiveTab] = useState(tabParam || "backend");
+
+  useEffect(() => {
+    if (tabParam && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (id: string) => {
+    setActiveTab(id);
+
+    // Update URL param without page reload
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", id);
+    window.history.replaceState(null, "", url.toString());
+  };
+
+  const activeSolution = solutions.find((s) => s.id === activeTab)!;
 
   return (
     <>
@@ -189,14 +233,19 @@ export function SolutionsPageContent() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">Full-Stack Solutions</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              Full-Stack Solutions
+            </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              End-to-end capabilities across Backend, Frontend, Mobile, AI/ML, Cloud, Data, Design, and Product.
+              End-to-end capabilities across Backend, Frontend, Mobile, AI/ML,
+              Cloud, Data, Design, and Product.
             </p>
-            <Button variant="hero" size="lg">
-              Book a Discovery Call
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            <Link href="/book">
+              <Button variant="hero" size="lg">
+                Book a Discovery Call
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -210,12 +259,12 @@ export function SolutionsPageContent() {
               {solutions.map((solution) => (
                 <button
                   key={solution.id}
-                  onClick={() => setActiveTab(solution.id)}
+                  onClick={() => handleTabChange(solution.id)}
                   className={cn(
                     "w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3",
                     activeTab === solution.id
                       ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
                   <solution.icon className="w-5 h-5" />
@@ -237,18 +286,27 @@ export function SolutionsPageContent() {
                   <activeSolution.icon className="w-7 h-7 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">{activeSolution.title}</h2>
-                  <p className="text-muted-foreground">{activeSolution.description}</p>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    {activeSolution.title}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {activeSolution.description}
+                  </p>
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 {/* What We Do */}
                 <div>
-                  <h3 className="text-foreground font-semibold mb-4">What We Do</h3>
+                  <h3 className="text-foreground font-semibold mb-4">
+                    What We Do
+                  </h3>
                   <ul className="space-y-3">
                     {activeSolution.whatWeDo.map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-muted-foreground text-sm">
+                      <li
+                        key={item}
+                        className="flex items-start gap-2 text-muted-foreground text-sm"
+                      >
                         <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                         {item}
                       </li>
@@ -258,10 +316,15 @@ export function SolutionsPageContent() {
 
                 {/* Outcomes */}
                 <div>
-                  <h3 className="text-foreground font-semibold mb-4">Outcomes</h3>
+                  <h3 className="text-foreground font-semibold mb-4">
+                    Outcomes
+                  </h3>
                   <ul className="space-y-3">
                     {activeSolution.outcomes.map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-muted-foreground text-sm">
+                      <li
+                        key={item}
+                        className="flex items-start gap-2 text-muted-foreground text-sm"
+                      >
                         <CheckCircle2 className="w-4 h-4 text-secondary mt-0.5 flex-shrink-0" />
                         {item}
                       </li>
@@ -272,13 +335,17 @@ export function SolutionsPageContent() {
 
               {/* Deliverables */}
               <div className="bg-muted/50 rounded-lg p-4">
-                <h4 className="text-foreground font-semibold mb-2">Deliverables</h4>
-                <p className="text-muted-foreground text-sm">{activeSolution.deliverables}</p>
+                <h4 className="text-foreground font-semibold mb-2">
+                  Deliverables
+                </h4>
+                <p className="text-muted-foreground text-sm">
+                  {activeSolution.deliverables}
+                </p>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
     </>
-  )
+  );
 }

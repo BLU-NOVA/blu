@@ -1,9 +1,10 @@
 // Updated HeroSection with scroll indicator pinned to bottom of viewport
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { ArrowRight, ChevronDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion";
+import { ArrowRight, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function HeroSection() {
   return (
@@ -30,7 +31,9 @@ export function HeroSection() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border"
             >
               <span className="text-primary">⚡</span>
-              <span className="text-sm text-muted-foreground">From Idea to Launch</span>
+              <span className="text-sm text-muted-foreground">
+                From Idea to Launch
+              </span>
             </motion.div>
 
             {/* Headline */}
@@ -41,23 +44,30 @@ export function HeroSection() {
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl text-muted-foreground font-medium">Partner with a senior full-stack team</p>
+            <p className="text-xl text-muted-foreground font-medium">
+              Partner with a senior full-stack team
+            </p>
 
             {/* Description */}
             <p className="text-muted-foreground max-w-lg leading-relaxed">
-              We help founders build products and scale teams. Full-stack development, design, product expertise, and
-              talent placement — all in one partnership.
+              We help founders build products and scale teams. Full-stack
+              development, design, product expertise, and talent placement — all
+              in one partnership.
             </p>
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-4">
-              <Button variant="hero" size="lg">
-                Start Your Project
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Button variant="heroOutline" size="lg">
-                View Our Work
-              </Button>
+              <Link href="/book">
+                <Button variant="hero" size="lg">
+                  Start Your Project
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/portfolio">
+                <Button variant="heroOutline" size="lg">
+                  View Our Work
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
@@ -88,8 +98,12 @@ export function HeroSection() {
                   10+
                 </div>
                 <div>
-                  <p className="text-foreground font-semibold">Products Launched</p>
-                  <p className="text-muted-foreground text-sm">Across multiple industries</p>
+                  <p className="text-foreground font-semibold">
+                    Products Launched
+                  </p>
+                  <p className="text-muted-foreground text-sm">
+                    Across multiple industries
+                  </p>
                 </div>
               </motion.div>
             </div>
@@ -101,9 +115,9 @@ export function HeroSection() {
       <button
         type="button"
         onClick={() => {
-          const next = document.getElementById('how');
-          if (!next) console.warn('next-section not found');
-          if (next) next.scrollIntoView({ behavior: 'smooth' });
+          const next = document.getElementById("how");
+          if (!next) console.warn("next-section not found");
+          if (next) next.scrollIntoView({ behavior: "smooth" });
         }}
         className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground z-20 focus:outline-none"
       >
@@ -116,5 +130,5 @@ export function HeroSection() {
         </motion.div>
       </button>
     </section>
-  )
+  );
 }

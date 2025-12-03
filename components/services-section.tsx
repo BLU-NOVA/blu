@@ -1,53 +1,76 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { ArrowRight, Server, Monitor, Smartphone, Brain, Cloud, Database, Palette, ClipboardList } from "lucide-react"
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Server,
+  Monitor,
+  Smartphone,
+  Brain,
+  Cloud,
+  Database,
+  Palette,
+  ClipboardList,
+} from "lucide-react";
 
 const services = [
   {
+    id: "backend",
     title: "Backend Development",
     description:
-      "Microservices & APIs with Node/NestJS, Go, Python. Event-driven architecture, auth, payments, integrations.",
+      "Microservices & APIs with Node/NestJS, Go, Python, Java. Event-driven architecture, auth, payments, integrations.",
     icon: Server,
   },
   {
+    id: "frontend",
     title: "Frontend Development",
-    description: "Modern web apps with Next.js/React, component libraries, SSR/ISR, and accessibility-first design.",
+    description:
+      "Modern web apps with Next.js/React, component libraries, SSR/ISR, and accessibility-first design.",
     icon: Monitor,
   },
   {
+    id: "mobile",
     title: "Mobile Development",
     description:
       "Cross-platform apps with React Native/Expo. Consistent UX, offline-first, and seamless app store delivery.",
     icon: Smartphone,
   },
   {
+    id: "ai-ml",
     title: "AI & Machine Learning",
-    description: "RAG systems, LLM agents, personalization, and ML pipelines with measurable business impact.",
+    description:
+      "RAG systems, LLM agents, personalization, and ML pipelines with measurable business impact.",
     icon: Brain,
   },
   {
+    id: "cloud",
     title: "Cloud & DevOps",
-    description: "AWS/GCP/Azure infrastructure, IaC with Terraform, CI/CD pipelines, observability, and SRE practices.",
+    description:
+      "AWS/GCP/Azure infrastructure, IaC with Terraform, CI/CD pipelines, observability, and SRE practices.",
     icon: Cloud,
   },
   {
+    id: "data",
     title: "Data & Analytics",
-    description: "ETL/ELT pipelines, data warehousing, dbt transformations, and self-serve BI dashboards.",
+    description:
+      "ETL/ELT pipelines, data warehousing, dbt transformations, and self-serve BI dashboards.",
     icon: Database,
   },
   {
+    id: "design",
     title: "Design",
-    description: "UX research, IA, wireframes, visual design, and design systems that drive conversion.",
+    description:
+      "UX research, IA, wireframes, visual design, and design systems that drive conversion.",
     icon: Palette,
   },
   {
+    id: "product",
     title: "Product Management",
     description:
       "Discovery, roadmaps, OKRs, backlog management, and analytics instrumentation for measurable outcomes.",
     icon: ClipboardList,
   },
-]
+];
 
 export function ServicesSection() {
   return (
@@ -62,7 +85,9 @@ export function ServicesSection() {
           className="text-center mb-16"
         >
           <p className="text-primary font-medium mb-3">Full-Stack Excellence</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Everything You Need to Launch</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Everything You Need to Launch
+          </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             End-to-end expertise across the entire product development lifecycle
           </p>
@@ -73,7 +98,7 @@ export function ServicesSection() {
           {services.map((service, index) => (
             <motion.a
               key={service.title}
-              href="#"
+              href={`/solutions?tab=${service.id}`}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -86,7 +111,9 @@ export function ServicesSection() {
               <h3 className="text-foreground font-semibold mb-2 group-hover:text-primary transition-colors">
                 {service.title}
               </h3>
-              <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{service.description}</p>
+              <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+                {service.description}
+              </p>
               <span className="text-primary text-sm font-medium inline-flex items-center gap-1 group-hover:gap-2 transition-all">
                 Learn more
                 <ArrowRight className="w-4 h-4" />
@@ -96,5 +123,5 @@ export function ServicesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -18,6 +18,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const differentiators = [
   {
@@ -114,10 +115,12 @@ export function WhyUsPageContent() {
               talent, transparent delivery, and observable practices to help you
               ship faster.
             </p>
-            <Button variant="hero" size="lg">
-              Book a Discovery Call
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            <Link href="/book">
+              <Button variant="hero" size="lg">
+                Book a Discovery Call
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>

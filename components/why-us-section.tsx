@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Zap, UserCheck, Award, Settings } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion";
+import { Zap, UserCheck, Award, Settings, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const features = [
   {
@@ -25,7 +26,7 @@ const features = [
     description: "Choose project-based or staff augmentation",
     icon: Settings,
   },
-]
+];
 
 export function WhyUsSection() {
   return (
@@ -42,8 +43,12 @@ export function WhyUsSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <p className="text-secondary font-medium mb-3">Why Founders Choose Us</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">Your Complete Technology Partner</h2>
+            <p className="text-secondary font-medium mb-3">
+              Why Founders Choose Us
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
+              Your Complete Technology Partner
+            </h2>
 
             {/* Features */}
             <div className="space-y-6">
@@ -60,8 +65,12 @@ export function WhyUsSection() {
                     <feature.icon className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-foreground font-semibold mb-1">{feature.title}</h3>
-                    <p className="text-muted-foreground text-sm">{feature.description}</p>
+                    <h3 className="text-foreground font-semibold mb-1">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {feature.description}
+                    </p>
                   </div>
                 </motion.div>
               ))}
@@ -74,7 +83,13 @@ export function WhyUsSection() {
               transition={{ delay: 0.5, duration: 0.4 }}
               className="mt-8"
             >
-              <Button variant="hero">Learn more about our approach</Button>
+              <Link
+                href="/why"
+                className="group inline-flex items-center gap-2 rounded-lg text-primary font-medium transition-all"
+              >
+                Learn more about our approach
+                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:scale-125" />
+              </Link>
             </motion.div>
           </motion.div>
 
@@ -103,12 +118,14 @@ export function WhyUsSection() {
                 className="absolute bottom-6 left-6 glass-card p-4"
               >
                 <p className="text-3xl font-bold gradient-text">8 weeks</p>
-                <p className="text-muted-foreground text-sm">Average MVP delivery</p>
+                <p className="text-muted-foreground text-sm">
+                  Average MVP delivery
+                </p>
               </motion.div>
             </div>
           </motion.div>
         </div>
       </div>
     </section>
-  )
+  );
 }

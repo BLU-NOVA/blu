@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -19,18 +20,27 @@ export function CTASection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto"
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">Ready to Turn Your Idea Into Reality?</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
+            Ready to Turn Your Idea Into Reality?
+          </h2>
+
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
             Let&apos;s discuss your product vision and create a plan to launch quickly.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="gradient" size="xl">
-              Book a Discovery Call
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            <Button variant="heroOutline" size="xl">
-              View Portfolio
-            </Button>
+            <Link href="/book">
+              <Button variant="gradient" size="xl">
+                Book a Discovery Call
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+
+            <Link href="/portfolio">
+              <Button variant="heroOutline" size="xl">
+                View Portfolio
+              </Button>
+            </Link>
           </div>
         </motion.div>
       </div>
