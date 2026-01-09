@@ -11,6 +11,8 @@ import {
   Database,
   Palette,
   ClipboardList,
+  TestTube,
+  Shield,
 } from "lucide-react";
 
 const services = [
@@ -69,6 +71,20 @@ const services = [
     description:
       "Discovery, roadmaps, OKRs, backlog management, and analytics instrumentation for measurable outcomes.",
     icon: ClipboardList,
+  },
+  {
+    id: "qa",
+    title: "QA & Testing",
+    description:
+      "Manual and automated testing, E2E with Cypress/Playwright, API testing, and performance testing.",
+    icon: TestTube,
+  },
+  {
+    id: "security",
+    title: "Security & Pentesting",
+    description:
+      "Penetration testing, vulnerability assessments, security audits, OWASP compliance, and SOC 2/GDPR support.",
+    icon: Shield,
   },
 ];
 

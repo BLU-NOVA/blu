@@ -13,6 +13,8 @@ import {
   Palette,
   ClipboardList,
   CheckCircle2,
+  TestTube,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -195,6 +197,50 @@ const solutions = [
       "Data-informed decisions",
     ],
     deliverables: "PRDs, roadmaps, analytics dashboards, sprint reports",
+  },
+  {
+    id: "qa",
+    title: "QA & Testing",
+    description: "Comprehensive testing to ensure quality at every release.",
+    icon: TestTube,
+    whatWeDo: [
+      "Manual and automated testing",
+      "Test strategy and planning",
+      "End-to-end testing (Cypress, Playwright)",
+      "API testing and validation",
+      "Performance and load testing",
+      "Mobile app testing",
+    ],
+    outcomes: [
+      "Higher code quality",
+      "Fewer production bugs",
+      "Faster release cycles",
+      "Comprehensive test coverage",
+    ],
+    deliverables:
+      "Test plans, automated test suites, bug reports, coverage reports, CI integration",
+  },
+  {
+    id: "security",
+    title: "Security & Pentesting",
+    description: "Protect your application and user data from threats.",
+    icon: Shield,
+    whatWeDo: [
+      "Penetration testing (web, mobile, API)",
+      "Vulnerability assessments",
+      "Security audits and code reviews",
+      "OWASP Top 10 compliance",
+      "Security best practices implementation",
+      "Compliance support (SOC 2, GDPR)",
+    ],
+    outcomes: [
+      "Secure applications",
+      "Compliance readiness",
+      "Reduced security risks",
+      "Incident response preparedness",
+    ],
+    deliverables:
+      "Pentest reports, vulnerability assessments, remediation guides, security policies",
   },
 ];
 

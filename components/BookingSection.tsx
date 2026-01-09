@@ -1,29 +1,29 @@
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, Check } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Send, Bot, User, Loader2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
-const budgetRanges = [
-  "Under $10,000",
-  "$10,000 - $25,000",
-  "$25,000 - $50,000",
-  "$50,000 - $100,000",
-  "$100,000+",
-];
+interface Message {
+  id: string;
+  role: "assistant" | "user";
+  content: string;
+}
 
-const timelines = ["ASAP", "1-2 weeks", "1 month", "2-3 months", "Flexible"];
-
-const referralSources = [
-  "Google Search",
-  "LinkedIn",
-  "Referral",
-  "Twitter/X",
-  "Other",
-];
+interface BookingData {
+  fullName: string;
+  email: string;
+  company: string;
+  role: string;
+  projectBrief: string;
+  budgetRange: string;
+  timeline: string;
+  referralSource: string;
+}
 
 const benefits = [
   "Free 30-minute discovery call",
@@ -33,292 +33,242 @@ const benefits = [
 ];
 
 export function BookingSection() {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    company: "",
-    role: "",
-    projectBrief: "",
-    budgetRange: "",
-    timeline: "",
-    referralSource: "",
-  });
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "welcome",
+      role: "assistant",
+      content:
+        "Hi there! I'm excited to learn about your project. Let's start with the basics - what's your name?",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [bookingData, setBookingData] = useState<Partial<BookingData>>({});
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log(formData);
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: input.trim(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/booking-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: input.trim(),
+          conversationHistory: messages.map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+          bookingData,
+        }),
+      });
+
+      const data = await response.json();
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: data.message,
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      if (data.bookingData) {
+        setBookingData(data.bookingData);
+      }
+
+      if (data.isComplete) {
+        setIsComplete(true);
+      }
+    } catch (error) {
+      console.error("Booking chat error:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I had a little hiccup. Could you try that again?",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <section className="pt-32 pb-20 relative overflow-hidden">
-      {/* Background effects */}
+    <section className="pt-32 pb-20 relative min-h-screen">
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
 
       <div className="container mx-auto px-6 relative z-10">
-        {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-3xl mx-auto mb-12"
         >
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
             Book a <span className="gradient-text">Discovery Call</span>
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl">
-            Tell us about your project and we&apos;ll get back to you within 24
-            hours to schedule a conversation.
+            Tell us about your project through a quick conversation.
           </p>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto">
-          {/* Benefits */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-6 mb-12"
-          >
-            {benefits.map((benefit, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 text-sm text-muted-foreground"
-              >
-                <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Check className="w-3 h-3 text-primary" />
-                </div>
-                {benefit}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex flex-wrap justify-center gap-6 mb-12"
+        >
+          {benefits.map((benefit, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 text-sm text-muted-foreground"
+            >
+              <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+                <Check className="w-3 h-3 text-primary" />
               </div>
-            ))}
-          </motion.div>
+              {benefit}
+            </div>
+          ))}
+        </motion.div>
 
-          {/* Form */}
-          <motion.form
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            onSubmit={handleSubmit}
-            className="glass-card p-8 md:p-10 space-y-8"
-          >
-            {/* Name and Email */}
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label
-                  htmlFor="fullName"
-                  className="text-sm font-medium text-foreground"
-                >
-                  Full Name <span className="text-secondary">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  placeholder="John Doe"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                  required
-                />
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="max-w-2xl mx-auto"
+        >
+          <div className="glass-card overflow-hidden flex flex-col h-[500px]">
+            <div className="flex items-center gap-3 p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-primary/5 flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                <Bot className="w-5 h-5 text-primary-foreground" />
               </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="email"
-                  className="text-sm font-medium text-foreground"
-                >
-                  Work Email <span className="text-secondary">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="john@company.com"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                  required
-                />
+              <div>
+                <h3 className="font-semibold text-foreground">Blu</h3>
+                <p className="text-xs text-muted-foreground">
+                  Project Consultant
+                </p>
               </div>
             </div>
 
-            {/* Company and Role */}
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label
-                  htmlFor="company"
-                  className="text-sm font-medium text-foreground"
-                >
-                  Company <span className="text-secondary">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  placeholder="Acme Inc"
-                  value={formData.company}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="role"
-                  className="text-sm font-medium text-foreground"
-                >
-                  Role <span className="text-secondary">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="role"
-                  name="role"
-                  placeholder="CEO, CTO, Product Manager"
-                  value={formData.role}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Project Brief */}
-            <div className="space-y-2">
-              <label
-                htmlFor="projectBrief"
-                className="text-sm font-medium text-foreground"
-              >
-                Project Brief <span className="text-secondary">*</span>
-              </label>
-              <textarea
-                id="projectBrief"
-                name="projectBrief"
-                rows={5}
-                placeholder="Tell us about your project, your goals, and any specific challenges you're facing..."
-                value={formData.projectBrief}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
-                required
-              />
-            </div>
-
-            {/* Budget and Timeline */}
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label
-                  htmlFor="budgetRange"
-                  className="text-sm font-medium text-foreground"
-                >
-                  Budget Range <span className="text-secondary">*</span>
-                </label>
-                <select
-                  id="budgetRange"
-                  name="budgetRange"
-                  value={formData.budgetRange}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none cursor-pointer"
-                  required
-                >
-                  <option value="" disabled>
-                    Select budget range
-                  </option>
-                  {budgetRanges.map((range) => (
-                    <option
-                      key={range}
-                      value={range}
-                      className="bg-card text-foreground"
-                    >
-                      {range}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="timeline"
-                  className="text-sm font-medium text-foreground"
-                >
-                  Desired Start <span className="text-secondary">*</span>
-                </label>
-                <select
-                  id="timeline"
-                  name="timeline"
-                  value={formData.timeline}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none cursor-pointer"
-                  required
-                >
-                  <option value="" disabled>
-                    Select timeline
-                  </option>
-                  {timelines.map((time) => (
-                    <option
-                      key={time}
-                      value={time}
-                      className="bg-card text-foreground"
-                    >
-                      {time}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Referral Source */}
-            <div className="space-y-2">
-              <label
-                htmlFor="referralSource"
-                className="text-sm font-medium text-foreground"
-              >
-                How did you hear about us?
-              </label>
-              <select
-                id="referralSource"
-                name="referralSource"
-                value={formData.referralSource}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none cursor-pointer"
-              >
-                <option value="" disabled>
-                  Select one
-                </option>
-                {referralSources.map((source) => (
-                  <option
-                    key={source}
-                    value={source}
-                    className="bg-card text-foreground"
+            <div
+              ref={messagesContainerRef}
+              className="flex-1 overflow-y-auto p-4 space-y-4"
+            >
+              <AnimatePresence>
+                {messages.map((message) => (
+                  <motion.div
+                    key={message.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={cn(
+                      "flex gap-2",
+                      message.role === "user" ? "justify-end" : "justify-start"
+                    )}
                   >
-                    {source}
-                  </option>
+                    {message.role === "assistant" && (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center flex-shrink-0">
+                        <Bot className="w-4 h-4 text-primary-foreground" />
+                      </div>
+                    )}
+                    <div
+                      className={cn(
+                        "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm",
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground rounded-br-md"
+                          : "bg-muted text-foreground rounded-bl-md"
+                      )}
+                    >
+                      {message.content}
+                    </div>
+                    {message.role === "user" && (
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                        <User className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                    )}
+                  </motion.div>
                 ))}
-              </select>
+              </AnimatePresence>
+
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex gap-2 justify-start"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                  <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                  </div>
+                </motion.div>
+              )}
+
+              {isComplete && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-center"
+                >
+                  <Check className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                  <p className="text-foreground font-medium">
+                    Booking Submitted
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    We'll reach out within 24 hours.
+                  </p>
+                </motion.div>
+              )}
             </div>
 
-            {/* Submit */}
-            <div className="pt-4">
-              <Button
-                type="submit"
-                variant="gradient"
-                size="xl"
-                className="w-full"
+            {!isComplete && (
+              <form
+                onSubmit={handleSubmit}
+                className="p-4 border-t border-border/50 flex-shrink-0"
               >
-                Submit Inquiry
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <p className="text-center text-sm text-muted-foreground mt-4">
-                We&apos;ll review your brief and send a calendar invite within
-                24 hours.
-              </p>
-            </div>
-          </motion.form>
-        </div>
+                <div className="flex gap-2">
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type your response..."
+                    className="flex-1 bg-muted/50 border-border/50 focus:border-primary"
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={!input.trim() || isLoading}
+                    size="icon"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </form>
+            )}
+          </div>
+        </motion.div>
       </div>
     </section>
   );
