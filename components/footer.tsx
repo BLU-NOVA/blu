@@ -6,6 +6,7 @@ const footerLinks = {
   company: [
     { name: "About", href: "/about" },
     { name: "Why Blunova", href: "/why" },
+    { name: "Careers", href: "/careers" },
     { name: "Contact", href: "/book" },
   ],
   services: [
