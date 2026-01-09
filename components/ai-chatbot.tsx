@@ -28,6 +28,11 @@ interface CustomerInfo {
   collected: boolean;
 }
 
+interface GeoLocation {
+  countryCode: string;
+  countryName: string;
+}
+
 export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -50,6 +55,10 @@ export function AIChatbot() {
     email: "",
     phone: "",
   });
+  const [geoLocation, setGeoLocation] = useState<GeoLocation>({
+    countryCode: "US",
+    countryName: "United States",
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -59,6 +68,26 @@ export function AIChatbot() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, showContactForm]);
+
+  useEffect(() => {
+    const detectLocation = async () => {
+      try {
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+        if (data.country_code && data.country_name) {
+          setGeoLocation({
+            countryCode: data.country_code,
+            countryName: data.country_name,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to detect location:", error);
+        // Keep default US location
+      }
+    };
+
+    detectLocation();
+  }, []);
 
   const handleContactSubmit = () => {
     if (!contactForm.name || !contactForm.phone) return;
@@ -107,6 +136,8 @@ export function AIChatbot() {
             content: m.content,
           })),
           customerInfo,
+          countryCode: geoLocation.countryCode,
+          countryName: geoLocation.countryName,
         }),
       });
 
