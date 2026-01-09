@@ -5,7 +5,134 @@ const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY,
 });
 
-const COMPANY_KNOWLEDGE = `
+// Currency configurations - same as pricing calculator
+const currencyConfigs: Record<string, { code: string; symbol: string; rate: number; locale: string }> = {
+    // Africa
+    KE: { code: "KES", symbol: "KSh", rate: 155, locale: "en-KE" },
+    NG: { code: "NGN", symbol: "₦", rate: 1550, locale: "en-NG" },
+    ZA: { code: "ZAR", symbol: "R", rate: 18.5, locale: "en-ZA" },
+    GH: { code: "GHS", symbol: "GH₵", rate: 12.5, locale: "en-GH" },
+    EG: { code: "EGP", symbol: "E£", rate: 31, locale: "ar-EG" },
+    TZ: { code: "TZS", symbol: "TSh", rate: 2500, locale: "en-TZ" },
+    UG: { code: "UGX", symbol: "USh", rate: 3800, locale: "en-UG" },
+    RW: { code: "RWF", symbol: "FRw", rate: 1250, locale: "en-RW" },
+    ET: { code: "ETB", symbol: "Br", rate: 56, locale: "am-ET" },
+    // Europe
+    GB: { code: "GBP", symbol: "£", rate: 0.79, locale: "en-GB" },
+    DE: { code: "EUR", symbol: "€", rate: 0.92, locale: "de-DE" },
+    FR: { code: "EUR", symbol: "€", rate: 0.92, locale: "fr-FR" },
+    IT: { code: "EUR", symbol: "€", rate: 0.92, locale: "it-IT" },
+    ES: { code: "EUR", symbol: "€", rate: 0.92, locale: "es-ES" },
+    NL: { code: "EUR", symbol: "€", rate: 0.92, locale: "nl-NL" },
+    CH: { code: "CHF", symbol: "CHF", rate: 0.88, locale: "de-CH" },
+    SE: { code: "SEK", symbol: "kr", rate: 10.5, locale: "sv-SE" },
+    // Americas
+    US: { code: "USD", symbol: "$", rate: 1, locale: "en-US" },
+    CA: { code: "CAD", symbol: "C$", rate: 1.36, locale: "en-CA" },
+    MX: { code: "MXN", symbol: "MX$", rate: 17.2, locale: "es-MX" },
+    BR: { code: "BRL", symbol: "R$", rate: 4.95, locale: "pt-BR" },
+    AR: { code: "ARS", symbol: "ARS$", rate: 850, locale: "es-AR" },
+    CO: { code: "COP", symbol: "COL$", rate: 4000, locale: "es-CO" },
+    // Asia
+    IN: { code: "INR", symbol: "₹", rate: 83, locale: "en-IN" },
+    CN: { code: "CNY", symbol: "¥", rate: 7.2, locale: "zh-CN" },
+    JP: { code: "JPY", symbol: "¥", rate: 149, locale: "ja-JP" },
+    SG: { code: "SGD", symbol: "S$", rate: 1.34, locale: "en-SG" },
+    AE: { code: "AED", symbol: "د.إ", rate: 3.67, locale: "ar-AE" },
+    SA: { code: "SAR", symbol: "﷼", rate: 3.75, locale: "ar-SA" },
+    PK: { code: "PKR", symbol: "₨", rate: 280, locale: "en-PK" },
+    PH: { code: "PHP", symbol: "₱", rate: 56, locale: "en-PH" },
+    ID: { code: "IDR", symbol: "Rp", rate: 15500, locale: "id-ID" },
+    MY: { code: "MYR", symbol: "RM", rate: 4.7, locale: "ms-MY" },
+    TH: { code: "THB", symbol: "฿", rate: 35, locale: "th-TH" },
+    VN: { code: "VND", symbol: "₫", rate: 24500, locale: "vi-VN" },
+    // Oceania
+    AU: { code: "AUD", symbol: "A$", rate: 1.53, locale: "en-AU" },
+    NZ: { code: "NZD", symbol: "NZ$", rate: 1.64, locale: "en-NZ" },
+};
+
+// Regional pricing multipliers - same as pricing calculator
+const regionalPricingMultipliers: Record<string, number> = {
+    // Africa - discounted rates
+    KE: 0.4, NG: 0.4, ZA: 0.5, GH: 0.4, EG: 0.45, TZ: 0.4, UG: 0.4, RW: 0.4, ET: 0.4,
+    // South Asia - discounted rates
+    IN: 0.45, PK: 0.4, PH: 0.5, ID: 0.5, VN: 0.45,
+    // Latin America - moderate discount
+    MX: 0.6, BR: 0.55, AR: 0.5, CO: 0.5,
+    // Standard rates
+    US: 1, CA: 0.95, GB: 1, DE: 1, FR: 1, AU: 0.95, SG: 0.9, AE: 0.9, JP: 0.95, CN: 0.7,
+};
+
+// Base prices in USD
+const basePricesUSD = {
+    webDevelopment: 5000,
+    mobileApp: 8000,
+    uiUxDesign: 2500,
+    apiDevelopment: 4000,
+    aiIntegration: 6000,
+    devOps: 3000,
+    maintenance: 1000,
+    training: 500,
+    documentation: 400,
+    testing: 800,
+    securityAudit: 1000,
+};
+
+function formatPrice(usdPrice: number, countryCode: string): string {
+    const currency = currencyConfigs[countryCode] || currencyConfigs.US;
+    const regionalMultiplier = regionalPricingMultipliers[countryCode] || 1;
+    const adjustedUsdPrice = usdPrice * regionalMultiplier;
+    const localPrice = adjustedUsdPrice * currency.rate;
+
+    try {
+        return new Intl.NumberFormat(currency.locale, {
+            style: "currency",
+            currency: currency.code,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        }).format(localPrice);
+    } catch {
+        return `${currency.symbol}${Math.round(localPrice).toLocaleString()}`;
+    }
+}
+
+function generatePricingKnowledge(countryCode: string, countryName: string): string {
+    const currency = currencyConfigs[countryCode] || currencyConfigs.US;
+
+    return `
+PRICING FOR ${countryName.toUpperCase()} (${currency.code}):
+IMPORTANT: All prices below are starting estimates. Final pricing depends entirely on the nature, scope, and complexity of each project. Always mention this when discussing prices.
+
+Services (Starting prices):
+- Web Development: ${formatPrice(basePricesUSD.webDevelopment, countryCode)} (Full-stack web applications)
+- Mobile App Development: ${formatPrice(basePricesUSD.mobileApp, countryCode)} (Native and cross-platform)
+- UI/UX Design: ${formatPrice(basePricesUSD.uiUxDesign, countryCode)} (User interface and experience)
+- API Development: ${formatPrice(basePricesUSD.apiDevelopment, countryCode)} (RESTful APIs and backend)
+- AI Integration: ${formatPrice(basePricesUSD.aiIntegration, countryCode)} (ML and AI model integration)
+- DevOps & Deployment: ${formatPrice(basePricesUSD.devOps, countryCode)} (CI/CD and cloud setup)
+
+Additional Services:
+- 3 Months Maintenance: ${formatPrice(basePricesUSD.maintenance, countryCode)}
+- Team Training: ${formatPrice(basePricesUSD.training, countryCode)}
+- Technical Documentation: ${formatPrice(basePricesUSD.documentation, countryCode)}
+- Comprehensive Testing: ${formatPrice(basePricesUSD.testing, countryCode)}
+- Security Audit: ${formatPrice(basePricesUSD.securityAudit, countryCode)}
+
+Package Tiers (multipliers applied to base prices):
+- Startup Package (1x): Core features, basic support, 2-week delivery
+- Professional Package (1.5x): Advanced features, priority support, 4-week delivery, maintenance
+- Enterprise Package (2x): Custom solutions, dedicated team, 6-week delivery, SLA guarantee, training
+
+PRICING DISCLAIMER: These are starting estimates only. The final price depends on:
+- Project complexity and scope
+- Number of features and integrations
+- Timeline requirements
+- Specific technical requirements
+Always encourage customers to book a discovery call at /book or use the pricing calculator at /pricing for a personalized estimate.
+`;
+}
+
+const COMPANY_KNOWLEDGE_BASE = `
 COMPANY: Blunova
 
 TAGLINE: Build & Launch Your Product Faster
@@ -41,7 +168,7 @@ OUR SERVICES:
 - Outcomes: 99.9% uptime, cost-aware infrastructure, clean API contracts, comprehensive test coverage
 
 2. Frontend Development
-- Next.js/React,Vue,Angular with TypeScript
+- Next.js/React, Vue, Angular with TypeScript
 - Component libraries (shadcn/ui, Tailwind)
 - Server-Side Rendering (SSR) & ISR
 - Responsive design & mobile-first approach
@@ -145,6 +272,7 @@ ENGAGEMENT OPTIONS:
 CONTACT:
 - Book a discovery call at /book
 - View our portfolio at /portfolio
+- Check pricing estimates at /pricing
 `;
 
 interface IntentAnalysis {
@@ -224,25 +352,34 @@ Look for signals like:
 
 export async function POST(request: NextRequest) {
     try {
-        const { message, conversationHistory, customerInfo } = await request.json();
+        const { message, conversationHistory, customerInfo, countryCode, countryName } = await request.json();
+
+        const userCountryCode = countryCode || "US";
+        const userCountryName = countryName || "United States";
 
         const intentAnalysis = await analyzeIntent(message, conversationHistory || []);
         const highIntent = intentAnalysis.intentScore >= 50;
 
+        const pricingKnowledge = generatePricingKnowledge(userCountryCode, userCountryName);
+
         const systemPrompt = `You are Blu, the AI assistant for Blunova. You have complete knowledge about the company and must answer questions accurately based on this information:
 
-${COMPANY_KNOWLEDGE}
+${COMPANY_KNOWLEDGE_BASE}
+
+${pricingKnowledge}
 
 GUIDELINES:
 - Be friendly, professional, and concise (2-3 sentences max)
 - Answer questions accurately based on the company knowledge above
 - If asked about services, provide specific details from the knowledge base
-- If asked about pricing, explain that pricing depends on project scope and encourage booking a discovery call
+- When discussing pricing, use the prices shown above for ${userCountryName} (${userCountryCode}). ALWAYS mention that these are starting estimates and final pricing depends on the nature, scope, and complexity of their specific project.
+- Always encourage customers to book a discovery call at /book or use the pricing calculator at /pricing for a personalized estimate
 - If someone shows buying intent, encourage them to book a discovery call or share their contact details
 - Never make up information not in the knowledge base
 - If you don't know something, say so and offer to connect them with the team
 - Highlight relevant services based on what the customer is asking about
 
+Current customer location: ${userCountryName}
 Current customer info: ${JSON.stringify(customerInfo || {})}
 Detected buying signals: ${intentAnalysis.buyingSignals.join(", ") || "None yet"}
 Customer needs identified: ${intentAnalysis.customerNeeds.join(", ") || "Still discovering"}`;
@@ -281,6 +418,7 @@ Customer needs identified: ${intentAnalysis.customerNeeds.join(", ") || "Still d
                         intentScore: intentAnalysis.intentScore,
                         intentAnalysis,
                         customerInfo,
+                        customerLocation: { countryCode: userCountryCode, countryName: userCountryName },
                     }),
                 });
             } catch (whatsappError) {

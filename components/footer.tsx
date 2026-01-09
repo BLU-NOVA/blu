@@ -120,20 +120,20 @@ export function Footer() {
           <p className="text-muted-foreground text-sm">
             © 2026 Blunova. All rights reserved.
           </p>
-          <div className="flex gap-6 text-sm">
-            <a
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="#"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Terms of Service
-            </a>
-          </div>
+            <div className="flex gap-6 text-sm">
+              <Link
+                href="/privacy-policy"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms-of-service"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Terms of Service
+              </Link>
+            </div>
         </div>
       </div>
     </footer>

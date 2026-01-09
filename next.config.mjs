@@ -47,7 +47,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.groq.com https://vercel-analytics.vercel.app",
+              "connect-src 'self' https://api.groq.com https://vercel-analytics.vercel.app https://ipapi.co",
               "frame-src 'none'",
               "object-src 'none'",
               "base-uri 'self'",
