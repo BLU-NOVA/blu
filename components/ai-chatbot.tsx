@@ -164,16 +164,16 @@ export function AIChatbot() {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="fixed bottom-6 right-6 z-50"
+            className="fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6"
           >
             <Button
               onClick={() => setIsOpen(true)}
               size="lg"
-              className="rounded-full w-16 h-16 shadow-2xl bg-primary hover:bg-primary/90"
+              className="rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-2xl bg-primary hover:bg-primary/90"
             >
-              <MessageCircle className="w-7 h-7" />
+              <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
             </Button>
-            <span className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full animate-pulse" />
+            <span className="absolute top-0 right-0 w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded-full animate-pulse" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -185,7 +185,7 @@ export function AIChatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] h-[600px] max-h-[80vh] flex flex-col bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+            className="fixed inset-4 z-50 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[380px] sm:h-[600px] sm:max-h-[80vh] flex flex-col bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
           >
             <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-primary/5">
               <div className="flex items-center gap-3">
