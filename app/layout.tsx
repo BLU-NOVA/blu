@@ -135,7 +135,10 @@ export default function RootLayout({
         availableLanguage: ["English"],
       },
     ],
-    sameAs: [],
+    sameAs: [
+      "https://www.instagram.com/blunovatech",
+      "https://www.linkedin.com/company/blu-nova-tech",
+    ],
     address: {
       "@type": "PostalAddress",
       addressCountry: "KE",

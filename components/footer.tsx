@@ -1,4 +1,4 @@
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { Instagram, Linkedin } from "lucide-react";
 import Link from "next/link";
 import Logo from "./Logo";
 
@@ -22,9 +22,16 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Github, href: "#", label: "GitHub" },
+  {
+    icon: Instagram,
+    href: "https://www.instagram.com/blunovatech",
+    label: "Instagram",
+  },
+  {
+    icon: Linkedin,
+    href: "https://www.linkedin.com/company/blu-nova-tech",
+    label: "LinkedIn",
+  },
 ];
 
 export function Footer() {
@@ -111,7 +118,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-sm">
-            © 2025 Blunova. All rights reserved.
+            © 2026 Blunova. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <a
